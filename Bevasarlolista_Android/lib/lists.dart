@@ -2,9 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'menu.dart';
 
-List<String> listaNevek = [];
-List<String >valami = ["egy", "ketto"];
-void loadListNames() async{
+Future<List<String>> loadListNames() async {
+  List<String> listaNevek = [];
   var response = await Dio().get('http://10.0.2.2:8881/api/listak');
   try {
     for( int i = 0 ; i < response.data["data"].length; i++ ) {
@@ -13,9 +12,10 @@ void loadListNames() async{
   } catch (e) {
     print("Hiba:  $e");
   }
+  return listaNevek;
 }
 
-dynamic kirajzol(adatok){
+List<Widget> kirajzol(adatok){
   return adatok.map((nev) {
     return Text(nev);
   }).toList();
@@ -42,7 +42,7 @@ class _ListsState extends State<Lists> {
       ),
       drawer: const Menu(),
       body: Column(
-        children: kirajzol(valami),
+        children: kirajzol(loadListNames()),
       ),
     );
   }
