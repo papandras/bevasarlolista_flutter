@@ -40,11 +40,12 @@ class _ProfilState extends State<Profil> {
                       color: Colors.green[400],
                       image: const DecorationImage(
                         image: AssetImage(
-                            'img/avatar.png',
+                          'img/avatar.png',
                         ),
                         fit: BoxFit.cover,
                       ),
-                      borderRadius: const BorderRadius.all(Radius.circular(50.0)),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(50.0)),
                       border: Border.all(
                         color: Colors.green,
                         width: 4.0,
@@ -53,7 +54,7 @@ class _ProfilState extends State<Profil> {
                   ),
                 ),
                 const Text(
-                    "My name",
+                  "My name",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     letterSpacing: 2.0,
@@ -84,7 +85,8 @@ class _ProfilState extends State<Profil> {
                       ),
                     ],
                   ),
-                ),Padding(
+                ),
+                Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -104,7 +106,8 @@ class _ProfilState extends State<Profil> {
                       ),
                     ],
                   ),
-                ),Padding(
+                ),
+                Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -124,7 +127,8 @@ class _ProfilState extends State<Profil> {
                       ),
                     ],
                   ),
-                ),Padding(
+                ),
+                Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -150,31 +154,32 @@ class _ProfilState extends State<Profil> {
           ),
           Expanded(
             flex: 1,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Row(
+            child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+              Row(
                 children: [
                   Container(
-                    width: MediaQuery. of(context). size. width,
+                    width: MediaQuery.of(context).size.width,
                     alignment: Alignment.bottomCenter,
-                    child: ElevatedButton(onPressed: () {
-                      Get.toNamed('/login');
-                    }, style: ElevatedButton.styleFrom(
-                      fixedSize: Size(MediaQuery. of(context). size. width * 0.90, 80.0),
-                      primary: Colors.green[600],
-                    ),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Get.toNamed('/login');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: Size(
+                            MediaQuery.of(context).size.width * 0.90, 80.0),
+                        primary: Colors.green[600],
+                      ),
                       child: const Text(
                         "Kijelentkezés",
-                      style: TextStyle(
-                        fontSize: 20.0,
+                        style: TextStyle(
+                          fontSize: 20.0,
+                        ),
                       ),
-                    ),
                     ),
                   ),
                 ],
-              ),]
-            ),
+              ),
+            ]),
           ),
         ],
       ),

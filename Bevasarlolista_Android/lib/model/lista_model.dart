@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'lista_elem_model.dart';
@@ -6,11 +5,13 @@ import 'lista_elem_model.dart';
 part 'lista_model.g.dart';
 
 @JsonSerializable()
-class ListaModel{
+class ListaModel {
   int? userid;
   String? nev;
   int? id;
-  @JsonKey(ignore: true)List<ListaELem>? elemek;
+  @JsonKey(ignore: true)
+  List<ListaELemModel>? elemek;
+
   ListaModel({this.userid, this.id, this.elemek, this.nev});
 
   factory ListaModel.fromJson(Map<String, dynamic> json) =>
