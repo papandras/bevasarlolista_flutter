@@ -52,7 +52,7 @@ class RegisterPage extends State<Register> {
     );
   }
 }
-_showDialog(BuildContext context) {
+_showDialog(BuildContext context, String message) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -61,7 +61,7 @@ _showDialog(BuildContext context) {
           Expanded(
             child: AlertDialog(
               title: Text('Figyelmeztetés'),
-              content: Text('A jelszavak nem egyeznek!'),
+              content: Text(message),
               actions: [
                 TextButton(
                   onPressed: () {
@@ -89,7 +89,10 @@ class RegisterButton extends StatelessWidget {
       onPressed: () async {
         if(password.text != password_confirm.text){
           password_confirm.text == null;
-          _showDialog(context);
+          _showDialog(context, 'A jelszavak nem egyeznek!');
+        }
+        else if(password.text == '' || password_confirm.text == '' || username.text == '' || email.text == ''){
+          _showDialog(context, 'Tölts ki minden mezőt!');
         }
         else{
           dynamic userdata = {

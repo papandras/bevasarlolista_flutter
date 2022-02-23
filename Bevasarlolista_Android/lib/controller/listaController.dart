@@ -12,6 +12,7 @@ class ListaController extends GetxController{
       for (int i = 0; i < response.data["data"].length; i++) {
         _lista.value.add(ListaModel.fromJson(response.data["data"][i]));
       }
+      print("response: ${response}");
     } catch (e) {
       print("Hiba:  $e");
     }

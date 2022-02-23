@@ -1,47 +1,17 @@
+import 'package:bevasarlolista_android/components/DeleteListButton.dart';
+import 'package:bevasarlolista_android/components/EditListButton.dart';
+import 'package:bevasarlolista_android/components/ShareListButton.dart';
 import 'package:bevasarlolista_android/components/menu.dart';
+import 'package:bevasarlolista_android/controller/listaElemController.dart';
 import 'package:bevasarlolista_android/model/lista_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
-
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'lists.dart';
-
-Future<List<String>> loadListItems() async {
-  List<String> listaElemek = [];
-  var response = await Dio().get('http://10.0.2.2:8881/api/listak/6/elemek');
-  try {
-    for (int i = 0; i < response.data["data"].length; i++) {
-      listaElemek.add(response.data["data"][i]["nev"].toString());
-    }
-  } catch (e) {
-    print("Hiba:  $e");
-  }
-  return listaElemek;
-}
-
-List<dynamic> kirajzol(adatok) {
-  return adatok.map((listanev) {
-    return Slidable(
-      startActionPane: ActionPane(
-        motion: const ScrollMotion(),
-        children: [
-          DeleteListButton(id: 0),
-          EditListButton(),
-        ],
-      ),
-      child: ListTile(
-        title: Text(
-          listanev,
-          textAlign: TextAlign.left,
-        ),
-        onTap: () {},
-        tileColor: Colors.green[400],
-      ),
-    );
-  }).toList();
-}
 
 class ViewListContent extends StatefulWidget {
   const ViewListContent({Key? key}) : super(key: key);
@@ -51,8 +21,12 @@ class ViewListContent extends StatefulWidget {
 }
 
 class _ViewListContentState extends State<ViewListContent> {
+  final ListeElemController listaElemController = Get.put(ListeElemController());
+
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)!.settings.arguments;
+    ListeElemController.ListaId = args.toString();
     return Scaffold(
         backgroundColor: Colors.green[200],
         appBar: AppBar(
@@ -72,7 +46,7 @@ class _ViewListContentState extends State<ViewListContent> {
               content: TextField(
                 controller: ujListaNeve,
               ),
-              confirm: const CreateNewListItemButton(),
+              confirm: CreateNewListItemButton(id: args.toString()),
             );
           },
           child: const Icon(Icons.add),
@@ -90,7 +64,7 @@ class _ViewListContentState extends State<ViewListContent> {
             });
           },
           child: FutureBuilder(
-            future: loadListItems(),
+            future: ListeElemController().loadListItems(),
             builder: (context, list) {
               if (list.connectionState != ConnectionState.done) {
                 return Center(
@@ -118,12 +92,32 @@ class _ViewListContentState extends State<ViewListContent> {
                   ),
                 );
               } else {
-                return ListView.builder(
-                  itemCount: kirajzol(list.data).length,
-                  itemBuilder: (context, index) {
-                    return kirajzol(list.data)[index];
-                  },
-                );
+                print("adatok: ${listaElemController.listaElemek}");
+                print("listaElemController: ${listaElemController.listaElemek.length}");
+                return Obx(() => ListView.builder(
+                    itemCount: listaElemController.listaElemek.length,
+                    itemBuilder: (context, index) {
+                      return Slidable(
+                        startActionPane: ActionPane(
+                          motion: const ScrollMotion(),
+                          children: [
+                            const ShareListButton(),
+                            DeleteListButton(
+                              id: listaElemController.listaElemek[index].id, subject: false,),
+                            EditListButton(),
+                          ],
+                        ),
+                        child: ListTile(
+                          title: Text(
+                            listaElemController.listaElemek[index].content!,
+                            textAlign: TextAlign.left,
+                          ),
+                          onTap: () {
+                          },
+                          tileColor: Colors.green[400],
+                        ),
+                      );
+                    }));
               }
             },
           ),
@@ -132,8 +126,9 @@ class _ViewListContentState extends State<ViewListContent> {
 }
 
 class CreateNewListItemButton extends StatefulWidget {
+  final String? id;
   const CreateNewListItemButton({
-    Key? key
+    Key? key, this.id
   }) : super(key: key);
 
   @override
@@ -147,14 +142,15 @@ class _CreateNewListItemButtonState extends State<CreateNewListItemButton> {
       onPressed: () async {
         try {
           print("text: ${ujListaNeve.text}");
-          ListaModel content = ListaModel(userid: 1, nev: ujListaNeve.text);
-          var response = await Dio().post('http://10.0.2.2:8881/api/listak/6/elemek/ujelem', data: content.toJson(),);
+          ListaModel content = ListaModel(nev: ujListaNeve.text);
+          var response = await Dio().post('http://10.0.2.2:8881/api/listak/${widget.id}/elemek/ujelem', data: content.toJson());
+          Navigator.of(context).pop();
           print(response);
           setState(() {
             _ViewListContentState();
           });
         } catch (e) {
-          //print("hiba: $e");
+          print("hiba: $e");
         }
       },
       style: ButtonStyle(

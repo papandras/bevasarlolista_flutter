@@ -10,7 +10,7 @@ ListaELemModel _$ListaELemModelFromJson(Map<String, dynamic> json) =>
     ListaELemModel(
       id: json['id'] as int?,
       lista_id: json['lista_id'] as int?,
-      content: json['content'] as String?,
+      content: json['nev'] as String?,
     );
 
 Map<String, dynamic> _$ListaELemModelToJson(ListaELemModel instance) =>

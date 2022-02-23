@@ -4,8 +4,8 @@ part 'lista_elem_model.g.dart';
 
 @JsonSerializable()
 class ListaELemModel {
-  int? lista_id;
   int? id;
+  int? lista_id;
   String? content;
 
   ListaELemModel({this.id, this.lista_id, this.content});

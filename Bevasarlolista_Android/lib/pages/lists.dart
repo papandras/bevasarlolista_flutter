@@ -1,105 +1,14 @@
+import 'package:bevasarlolista_android/components/CreateNewListButton.dart';
+import 'package:bevasarlolista_android/components/DeleteListButton.dart';
+import 'package:bevasarlolista_android/components/EditListButton.dart';
+import 'package:bevasarlolista_android/components/ShareListButton.dart';
 import 'package:bevasarlolista_android/controller/listaController.dart';
-import 'package:bevasarlolista_android/model/lista_model.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import '../components/menu.dart';
 
 TextEditingController ujListaNeve = TextEditingController();
-
-
-class EditListButton extends StatelessWidget {
-  final _controller = Get.put(ListaController());
-
-  EditListButton({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-        onPressed: () {
-          Get.defaultDialog(
-              title: "Szerkesztés",
-              content: const TextField(),
-              confirm:
-                  ElevatedButton(onPressed: () {}, child: const Text("Ok")));
-        },
-        icon: const Icon(Icons.edit));
-  }
-}
-
-class DeleteListButton extends StatefulWidget {
-  int? id;
-  bool? subject;
-  DeleteListButton({Key? key, this.id, this.subject}) : super(key: key);
-
-  @override
-  State<DeleteListButton> createState() => _DeleteListButtonState();
-}
-
-class _DeleteListButtonState extends State<DeleteListButton> {
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-        onPressed: () {
-          Get.defaultDialog(
-              title: "Biztosan törli?",
-              confirm: ElevatedButton(
-                onPressed: () async {
-                  print(widget.id);
-                  try{
-                    await Dio().delete('http://10.0.2.2:8881/api/listak/${widget.id}');
-                  }catch(e){
-                    print("Hiba: ${e}");
-                  }
-                  /*if(widget.subject!){
-                    //ToDo: lista törlése
-                    print("lista törlés");
-                  }else{
-                    //ToDo: elem törlése
-                    print("elem törlése");
-                  }*/
-                },
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.red)),
-                child: const Text("Ok"),
-              ),
-              cancel: ElevatedButton(
-                onPressed: () {
-
-                },
-                child: const Text("Mégse"),
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.green)),
-              ));
-        },
-        icon: const Icon(Icons.delete));
-  }
-}
-
-class ShareListButton extends StatelessWidget {
-  const ShareListButton({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-        onPressed: () {
-          Get.defaultDialog(
-              title: "Kivel?",
-              content: const TextField(),
-              confirm:
-                  ElevatedButton(onPressed: () {}, child: const Text("Ok")));
-        },
-        icon: const Icon(Icons.share));
-  }
-}
 
 class Lists extends StatefulWidget {
   const Lists({Key? key}) : super(key: key);
@@ -109,6 +18,8 @@ class Lists extends StatefulWidget {
 }
 
 class _ListsState extends State<Lists> {
+  final ListaController listaController = Get.put(ListaController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -149,7 +60,7 @@ class _ListsState extends State<Lists> {
           },
           child: FutureBuilder(
             future: ListaController().loadListNames(),
-            builder: (context, list){
+            builder: (context, list) {
               if (list.connectionState != ConnectionState.done) {
                 return Center(
                   child: Padding(
@@ -175,39 +86,38 @@ class _ListsState extends State<Lists> {
                     ),
                   ),
                 );
-              } else{
-                return GetBuilder<ListaController>(
-                  init: ListaController(),
-                  builder: (listaController) {
-                    return ListView.builder(
-                        itemCount: listaController.lista.length,
-                        itemBuilder: (context, index) {
-                          return Slidable(
-                            startActionPane: ActionPane(
-                              motion: const ScrollMotion(),
-                              children: [
-                                const ShareListButton(),
-                                DeleteListButton(id: listaController.lista[index].id),
-                                EditListButton(),
-                              ],
-                            ),
-                            child: ListTile(
-                              title: Text(
-                                listaController.lista[index].nev!,
-                                textAlign: TextAlign.left,
-                              ),
-                              onTap: () {
-                                Get.toNamed('/viewlist/${listaController.lista[index].id}');
-                              },
-                              tileColor: Colors.green[400],
-                            ),
-                          );
-                        }
-
-                    );
-                    //}
-                  },
-                );
+              } else {
+                print("listaController: ${listaController.lista.length}");
+                return Obx(() => ListView.builder(
+                    itemCount: listaController.lista.length,
+                    itemBuilder: (context, index) {
+                      return Slidable(
+                        startActionPane: ActionPane(
+                          motion: const ScrollMotion(),
+                          children: [
+                            const ShareListButton(),
+                            DeleteListButton(
+                                id: listaController.lista[index].id, subject: true,),
+                            EditListButton(),
+                          ],
+                        ),
+                        child: ListTile(
+                          title: Text(
+                            listaController.lista[index].nev!,
+                            textAlign: TextAlign.left,
+                          ),
+                          onTap: () {
+                            //Get.toNamed('/viewlist/${listaController.lista[index].id}');
+                            Navigator.pushNamed(
+                                context,
+                                '/viewlist',
+                                arguments: listaController.lista[index].id,
+                            );
+                          },
+                          tileColor: Colors.green[400],
+                        ),
+                      );
+                    }));
               }
             },
           ),
@@ -215,36 +125,3 @@ class _ListsState extends State<Lists> {
   }
 }
 
-class CreateNewListButton extends StatefulWidget {
-  const CreateNewListButton({
-    Key? key
-  }) : super(key: key);
-
-  @override
-  State<CreateNewListButton> createState() => _CreateNewListButtonState();
-}
-
-class _CreateNewListButtonState extends State<CreateNewListButton> {
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () async {
-        try {
-          print("text: ${ujListaNeve.text}");
-          ListaModel content = ListaModel(userid: 1, nev: ujListaNeve.text);
-          var response = await Dio().post('http://10.0.2.2:8881/api/listak', data: content.toJson(),);
-          print(response);
-          Navigator.of(context).pop();
-          setState(() {
-            _ListsState();
-          });
-        } catch (e) {
-          //print("hiba: $e");
-        }
-      },
-      style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(Colors.green)),
-      child: const Text("Mentés"),
-    );
-  }
-}
