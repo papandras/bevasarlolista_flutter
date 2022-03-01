@@ -10,7 +10,7 @@ class ListaModel {
   String? nev;
   int? id;
   @JsonKey(ignore: true)
-  List<ListaELemModel>? elemek;
+  List<ListaElemModel>? elemek;
 
   ListaModel({this.userid, this.id, this.elemek, this.nev});
 

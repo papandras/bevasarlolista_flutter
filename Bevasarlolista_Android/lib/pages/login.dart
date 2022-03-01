@@ -1,10 +1,16 @@
+import 'dart:convert';
+
 import 'package:bevasarlolista_android/controller/listaController.dart';
+import 'package:bevasarlolista_android/controller/userController.dart';
+import 'package:bevasarlolista_android/model/user_model.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'home.dart';
 import '../main.dart';
 
-//ListaController listaController = Get.find<ListaController>();
+TextEditingController username = new TextEditingController();
+TextEditingController password = new TextEditingController();
 
 class LoginPage extends State<Login> {
   @override
@@ -49,6 +55,32 @@ class LoginPage extends State<Login> {
       ),
     );
   }
+}
+
+_showDialog(BuildContext context, String message) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Column(
+        children: [
+          Expanded(
+            child: AlertDialog(
+              title: Text('Figyelmeztetés'),
+              content: Text(message),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Bezárás', style: TextStyle(color: Colors.black),),
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+    },
+  );
 }
 
 class LoginTitle extends StatelessWidget {
@@ -115,11 +147,38 @@ class LoginButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const Home()),
-        );
+      onPressed: () async {
+        dynamic userdata = {
+          'name': username.text,
+          'password': password.text,
+        };
+        if(username.text != "" || password.text != ""){
+          var response = await Dio().put('http://10.0.2.2:8881/api/bejelentkezes', data: jsonEncode(userdata));
+          if(response.data["message"] == null){
+            UserController.loggeduser = UserModel(
+              id: response.data["user"]["id"],
+              name: response.data["user"]["name"].toString(),
+              token: response.data["user"]["api_token"].toString(),
+              key: response.data["access_token"].toString(),
+              email: response.data["email"].toString(),
+              created: response.data["created_at"],
+            );
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Home()),
+            );
+          }else{
+            print(response.data["message"]);
+            _showDialog(context, response.data["message"]);
+          }
+        }
+        else{
+          _showDialog(context, "Töltsd ki az adatokat!");
+        }
+
+        /*print(UserController.loggeduser.name);
+        */
       },
       child: const Text(
         'Bejelentkezés',
@@ -145,8 +204,8 @@ class Password extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: const [
-        Padding(
+      children: [
+        const Padding(
           padding: EdgeInsets.fromLTRB(0, 16, 0, 8),
           child: Text(
             'Jelszó:',
@@ -159,8 +218,9 @@ class Password extends StatelessWidget {
           ),
         ),
         TextField(
+          controller: password,
           obscureText: true,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             border: OutlineInputBorder(),
             prefixIcon: Icon(Icons.password),
           ),
@@ -179,8 +239,8 @@ class UserName extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: const [
-        Padding(
+      children: [
+        const Padding(
           padding: EdgeInsets.fromLTRB(0, 0, 0, 8),
           child: Text(
             'Felhasználó név:',
@@ -193,7 +253,8 @@ class UserName extends StatelessWidget {
           ),
         ),
         TextField(
-          decoration: InputDecoration(
+          controller: username,
+          decoration: const InputDecoration(
             border: OutlineInputBorder(),
             prefixIcon: Icon(Icons.person),
           ),

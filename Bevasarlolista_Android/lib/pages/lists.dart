@@ -59,9 +59,9 @@ class _ListsState extends State<Lists> {
             });
           },
           child: FutureBuilder(
-            future: ListaController().loadListNames(),
+            future: listaController.loadListNames(),
             builder: (context, list) {
-              if (list.connectionState != ConnectionState.done) {
+              if (list.connectionState != ConnectionState.done && listaController.lista.length == 0) {
                 return Center(
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
@@ -97,8 +97,8 @@ class _ListsState extends State<Lists> {
                           children: [
                             const ShareListButton(),
                             DeleteListButton(
-                                id: listaController.lista[index].id, subject: true,),
-                            EditListButton(),
+                                id: listaController.lista[index].id, subject: true, deleteFunction: listaController.Delete),
+                            EditListButton(id: listaController.lista[index].id, name: ujListaNeve.text, editFunction: listaController.Edit),
                           ],
                         ),
                         child: ListTile(

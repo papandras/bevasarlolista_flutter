@@ -1,3 +1,4 @@
+import 'package:bevasarlolista_android/controller/userController.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../main.dart';
@@ -53,9 +54,9 @@ class _ProfilState extends State<Profil> {
                     ),
                   ),
                 ),
-                const Text(
-                  "My name",
-                  style: TextStyle(
+                Text(
+                  "${UserController.loggeduser}",
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     letterSpacing: 2.0,
                     fontSize: 30.0,

@@ -21,12 +21,12 @@ class ViewListContent extends StatefulWidget {
 }
 
 class _ViewListContentState extends State<ViewListContent> {
-  final ListeElemController listaElemController = Get.put(ListeElemController());
+  final ListaElemController listaElemController = Get.put(ListaElemController());
 
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments;
-    ListeElemController.ListaId = args.toString();
+    ListaElemController.ListaId = args.toString();
     return Scaffold(
         backgroundColor: Colors.green[200],
         appBar: AppBar(
@@ -64,7 +64,7 @@ class _ViewListContentState extends State<ViewListContent> {
             });
           },
           child: FutureBuilder(
-            future: ListeElemController().loadListItems(),
+            future: listaElemController.loadListItems(),
             builder: (context, list) {
               if (list.connectionState != ConnectionState.done) {
                 return Center(
@@ -91,9 +91,11 @@ class _ViewListContentState extends State<ViewListContent> {
                     ),
                   ),
                 );
-              } else {
-                print("adatok: ${listaElemController.listaElemek}");
-                print("listaElemController: ${listaElemController.listaElemek.length}");
+              } else if(listaElemController.listaElemek.length == 0){
+                return ListView(children: const [
+                Center(child: Text("A lista nem tartalmaz elemeket"))
+                ]);
+              }else {
                 return Obx(() => ListView.builder(
                     itemCount: listaElemController.listaElemek.length,
                     itemBuilder: (context, index) {
@@ -103,8 +105,8 @@ class _ViewListContentState extends State<ViewListContent> {
                           children: [
                             const ShareListButton(),
                             DeleteListButton(
-                              id: listaElemController.listaElemek[index].id, subject: false,),
-                            EditListButton(),
+                              id: listaElemController.listaElemek[index].id, subject: false, deleteFunction: listaElemController.Delete,),
+                            EditListButton( id: listaElemController.listaElemek[index].id, name: listaElemController.listaElemek[index].content, editFunction: listaElemController.Edit),
                           ],
                         ),
                         child: ListTile(
