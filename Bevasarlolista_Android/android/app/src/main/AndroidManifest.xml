@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="papandras.bevasarlolista.bevasarlolista_android">
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="bevasarlolista_android"
         android:name="${applicationName}"

@@ -4,10 +4,12 @@ import 'package:bevasarlolista_android/model/user_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import '../main.dart';
 import '../components/menu.dart';
 
 bool isChecked = false;
+final ImagePicker _picker = ImagePicker();
 
 class Profil extends StatefulWidget {
   const Profil({Key? key}) : super(key: key);

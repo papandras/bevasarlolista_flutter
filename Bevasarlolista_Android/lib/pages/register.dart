@@ -99,12 +99,15 @@ class RegisterButton extends StatelessWidget {
           _showDialog(context, 'Tölts ki minden mezőt!');
         }
         else{
+          var kepfeltolt = await Dio().post('https://kek.sh/api/v1/posts', data: {"url": Gravatar(email.text).imageUrl()}, options: Options(headers: {
+            'x-kek-auth': 'Tz5tAbLmsKVfBrLp.5qcQc57wnNUHoFeTD,h6DrfOCFIaqV9A4qJq'
+          }));
           dynamic userdata = {
             'fullname': fullname.text,
             'name': username.text,
             'password': password.text,
             'email': email.text,
-            'profilpicture': Gravatar(email.text).imageUrl(),
+            'profilpicture': 'https://i.kek.sh/${kepfeltolt.data["filename"]}',
           };
           try{
             var response = await Dio().post('${UrlPrefix.prefix}/api/regisztracio', data: jsonEncode(userdata));
@@ -112,6 +115,7 @@ class RegisterButton extends StatelessWidget {
             Get.toNamed('/login');
           }catch(e){
             print("Hiba: ${e}");
+            _showDialog(context, e.toString());
           }
         }
         //Get.toNamed('/login');
@@ -153,6 +157,7 @@ class Email extends StatelessWidget {
           ),
         ),
         TextField(
+          maxLength: 30,
           controller: email,
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
@@ -187,6 +192,7 @@ class PasswordConfirm extends StatelessWidget {
           ),
         ),
         TextField(
+          maxLength: 30,
           controller: password_confirm,
           obscureText: true,
           decoration: const InputDecoration(
@@ -222,6 +228,7 @@ class FullName extends StatelessWidget {
           ),
         ),
         TextField(
+          maxLength: 30,
           controller: fullname,
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
@@ -256,6 +263,7 @@ class UserName extends StatelessWidget {
           ),
         ),
         TextField(
+          maxLength: 30,
           controller: username,
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
@@ -320,6 +328,7 @@ class Password extends StatelessWidget {
           ),
         ),
         TextField(
+          maxLength: 30,
           controller: password,
           obscureText: true,
           decoration: const InputDecoration(

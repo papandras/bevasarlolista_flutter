@@ -144,6 +144,7 @@ class Password extends StatelessWidget {
           ),
         ),
         TextField(
+          maxLength: 30,
           controller: password,
           obscureText: true,
           decoration: const InputDecoration(
@@ -179,6 +180,7 @@ class FullName extends StatelessWidget {
           ),
         ),
         TextField(
+          maxLength: 30,
           controller: fullname,
           decoration: InputDecoration(
             border: const OutlineInputBorder(),
@@ -214,6 +216,7 @@ class Email extends StatelessWidget {
           ),
         ),
         TextField(
+          maxLength: 30,
           controller: email,
           decoration: InputDecoration(
             border: const OutlineInputBorder(),
@@ -249,10 +252,11 @@ class ProfilPicture extends StatelessWidget {
           ),
         ),
         TextField(
+          maxLength: 100,
           controller: profilpicture,
           decoration: InputDecoration(
             border: const OutlineInputBorder(),
-            prefixIcon: const Icon(Icons.image),
+            prefixIcon: IconButton(onPressed: (){}, icon: const Icon(Icons.image)),
             hintText: "${UserController.loggeduser!.profilpicture!}"
           ),
         ),
@@ -280,16 +284,24 @@ class SaveButton extends StatelessWidget {
           profilpicture.text = UserController.loggeduser!.profilpicture!;
         }
         if(password.text != ""){
+          var kepfeltolt = await Dio().post('https://kek.sh/api/v1/posts', data: {"url": profilpicture.text}, options: Options(headers: {
+            'x-kek-auth': 'Tz5tAbLmsKVfBrLp.5qcQc57wnNUHoFeTD,h6DrfOCFIaqV9A4qJq'
+          }));
           dynamic edituserdata = {
             'fullname': fullname.text,
             'password': password.text,
             'email': email.text,
-            'profilpicture': profilpicture.text,
+            'profilpicture': 'https://i.kek.sh/${kepfeltolt.data["filename"]}',
           };
           print(edituserdata);
-          var response = await Dio().put('${UrlPrefix.prefix}/api/felhasznalo/${UserController.loggeduser!.id!}', data: jsonEncode(edituserdata));
-          _showDialog(context, "Adatok sikeresen módosítva, kérlek jelentkezz be újra!");
-          Get.toNamed('/login');
+          try{
+            var response = await Dio().put('${UrlPrefix.prefix}/api/felhasznalo/${UserController.loggeduser!.id!}', data: jsonEncode(edituserdata));
+            //_showDialog(context, "Adatok sikeresen módosítva, kérlek jelentkezz be újra!");
+            Get.toNamed('/login');
+          }
+          catch(e){
+            _showDialog(context, e.toString());
+          }
         }
         else{
           _showDialog(context, "A jelszót kötelező kitölteni!");

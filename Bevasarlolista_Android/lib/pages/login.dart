@@ -154,26 +154,31 @@ class LoginButton extends StatelessWidget {
 
         if(username.text != "" || password.text != ""){
           if(password.text.length > 7){
-            var response = await Dio().put('${UrlPrefix.prefix}/api/bejelentkezes', data: jsonEncode(userdata));
-            if(response.data["message"] == null){
-              UserController.loggeduser = UserModel(
-                id: response.data["user"]["id"],
-                fullname: response.data["user"]["fullname"],
-                name: response.data["user"]["name"].toString(),
-                token: response.data["user"]["api_token"].toString(),
-                key: response.data["access_token"].toString(),
-                email: response.data["user"]["email"].toString(),
-                profilpicture:  response.data["user"]["profilpicture"].toString(),
-                created: response.data["user"]["created_at"].toString(),
-              );
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Home()),
-              );
-            }else{
-              print(response.data["message"]);
-              print("resp: ${response.data}");
-              _showDialog(context, response.data["message"]);
+            try{
+              var response = await Dio().put('${UrlPrefix.prefix}/api/bejelentkezes', data: jsonEncode(userdata));
+              if(response.data["message"] == null){
+                UserController.loggeduser = UserModel(
+                  id: response.data["user"]["id"],
+                  fullname: response.data["user"]["fullname"],
+                  name: response.data["user"]["name"].toString(),
+                  token: response.data["user"]["api_token"].toString(),
+                  key: response.data["access_token"].toString(),
+                  email: response.data["user"]["email"].toString(),
+                  profilpicture:  response.data["user"]["profilpicture"].toString(),
+                  created: response.data["user"]["created_at"].toString(),
+                );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Home()),
+                );
+              }else{
+                print(response.data["message"]);
+                print("resp: ${response.data}");
+                _showDialog(context, response.data["message"]);
+              }
+            }
+            catch(e){
+              _showDialog(context, e.toString());
             }
           }
           else{
@@ -225,7 +230,7 @@ class Password extends StatelessWidget {
           ),
         ),
         TextField(
-          maxLength: 300,
+          maxLength: 30,
           controller: password,
           obscureText: true,
           decoration: const InputDecoration(
@@ -261,6 +266,7 @@ class UserName extends StatelessWidget {
           ),
         ),
         TextField(
+          maxLength: 30,
           controller: username,
           decoration: const InputDecoration(
             border: OutlineInputBorder(),

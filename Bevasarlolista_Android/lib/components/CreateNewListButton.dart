@@ -19,6 +19,7 @@ class _CreateNewListButtonState extends State<CreateNewListButton> {
       onPressed: () async {
         try {
           print("text: ${ujListaNeve.text}");
+          print('${UrlPrefix.prefix}/api/listak');
           ListaModel content = ListaModel(userid: UserController.loggeduser!.id!, nev: ujListaNeve.text);
           var response = await Dio().post(
             '${UrlPrefix.prefix}/api/listak',
