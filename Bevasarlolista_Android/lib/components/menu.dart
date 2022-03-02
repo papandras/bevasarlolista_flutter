@@ -48,7 +48,7 @@ class Menu extends StatelessWidget {
             ),
             title: const Text('Főoldal'),
             onTap: () {
-              Get.toNamed('/');
+              Get.toNamed('/home');
             },
           ),
           ListTile(
@@ -59,6 +59,16 @@ class Menu extends StatelessWidget {
             title: const Text('Listáim'),
             onTap: () {
               Get.toNamed('/lists');
+            },
+          ),
+          ListTile(
+            leading: const Icon(
+              Icons.settings,
+              color: Colors.green,
+            ),
+            title: const Text('Beállítások'),
+            onTap: () {
+              Get.toNamed('/settings');
             },
           ),
           ListTile(

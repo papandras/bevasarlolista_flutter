@@ -6,6 +6,7 @@ import 'pages/lists.dart';
 import 'pages/login.dart';
 import 'pages/profil.dart';
 import 'pages/register.dart';
+import 'pages/settings.dart';
 import 'pages/viewlist.dart';
 
 ListaController listaController = Get.find<ListaController>();
@@ -14,13 +15,14 @@ void main() {
   runApp(GetMaterialApp(
     home: const Login(),
     getPages: [
-      GetPage(name: '/', page: () => const Home()),
+      GetPage(name: '/home', page: () => const Home()),
       GetPage(name: '/login', page: () => const Login()),
       GetPage(name: '/register', page: () => const Register()),
       GetPage(name: '/lists', page: () => const Lists()),
       GetPage(name: '/lists/:list', page: () => const Lists()),
       GetPage(name: '/profil', page: () => const Profil()),
       GetPage(name: '/viewlist', page: () => const ViewListContent()),
+      GetPage(name: '/settings', page: () => const Settings()),
     ],
   ));
 }

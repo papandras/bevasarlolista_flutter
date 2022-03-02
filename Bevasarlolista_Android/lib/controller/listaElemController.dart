@@ -1,4 +1,5 @@
 import 'package:bevasarlolista_android/model/lista_elem_model.dart';
+import 'package:bevasarlolista_android/model/urlprefix.dart';
 import 'package:bevasarlolista_android/pages/lists.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
@@ -10,7 +11,7 @@ class ListaElemController extends GetxController{
 
   Future<void> loadListItems() async {
     _listaElemek = Rx<List<ListaElemModel>>([]);
-    var response = await Dio().get('http://10.0.2.2:8881/api/listak/${ListaId}');
+    var response = await Dio().get('${UrlPrefix.prefix}/api/listak/${ListaId}');
     try {
       for (int i = 0; i < response.data["data"].length; i++) {
         _listaElemek.value.add(ListaElemModel.fromJson(response.data["data"][i]));
@@ -24,7 +25,7 @@ class ListaElemController extends GetxController{
 
   Future<void> Delete(int id) async {
     try {
-      await Dio().delete('http://10.0.2.2:8881/api/listak/elemek/$id', options: Options(followRedirects: false, validateStatus: (status){
+      await Dio().delete('${UrlPrefix.prefix}/api/listak/elemek/$id', options: Options(followRedirects: false, validateStatus: (status){
         return status! < 500;
       }));
       loadListItems();
@@ -36,7 +37,7 @@ class ListaElemController extends GetxController{
   Future<void> Edit(int id, String name) async {
     try {
       var content = ListaElemModel(id: id, content: name);
-      await Dio().put('http://10.0.2.2:8881/api/listak/elemek/$id', options: Options(followRedirects: false, validateStatus: (status){
+      await Dio().put('${UrlPrefix.prefix}/api/listak/elemek/$id', options: Options(followRedirects: false, validateStatus: (status){
         return status! < 500;
       }), data: content.toJson());
       loadListItems();

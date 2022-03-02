@@ -4,6 +4,7 @@ import 'package:bevasarlolista_android/components/ShareListButton.dart';
 import 'package:bevasarlolista_android/components/menu.dart';
 import 'package:bevasarlolista_android/controller/listaElemController.dart';
 import 'package:bevasarlolista_android/model/lista_model.dart';
+import 'package:bevasarlolista_android/model/urlprefix.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -145,7 +146,7 @@ class _CreateNewListItemButtonState extends State<CreateNewListItemButton> {
         try {
           print("text: ${ujListaNeve.text}");
           ListaModel content = ListaModel(nev: ujListaNeve.text);
-          var response = await Dio().post('http://10.0.2.2:8881/api/listak/${widget.id}/elemek/ujelem', data: content.toJson());
+          var response = await Dio().post('${UrlPrefix.prefix}/api/listak/${widget.id}/elemek/ujelem', data: content.toJson());
           Navigator.of(context).pop();
           print(response);
           setState(() {

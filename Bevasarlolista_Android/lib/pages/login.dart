@@ -1,7 +1,6 @@
 import 'dart:convert';
-
-import 'package:bevasarlolista_android/controller/listaController.dart';
 import 'package:bevasarlolista_android/controller/userController.dart';
+import 'package:bevasarlolista_android/model/urlprefix.dart';
 import 'package:bevasarlolista_android/model/user_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -152,25 +151,33 @@ class LoginButton extends StatelessWidget {
           'name': username.text,
           'password': password.text,
         };
-        if(username.text != "" || password.text != ""){
-          var response = await Dio().put('http://10.0.2.2:8881/api/bejelentkezes', data: jsonEncode(userdata));
-          if(response.data["message"] == null){
-            UserController.loggeduser = UserModel(
-              id: response.data["user"]["id"],
-              name: response.data["user"]["name"].toString(),
-              token: response.data["user"]["api_token"].toString(),
-              key: response.data["access_token"].toString(),
-              email: response.data["email"].toString(),
-              created: response.data["created_at"],
-            );
 
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const Home()),
-            );
-          }else{
-            print(response.data["message"]);
-            _showDialog(context, response.data["message"]);
+        if(username.text != "" || password.text != ""){
+          if(password.text.length > 7){
+            var response = await Dio().put('${UrlPrefix.prefix}/api/bejelentkezes', data: jsonEncode(userdata));
+            if(response.data["message"] == null){
+              UserController.loggeduser = UserModel(
+                id: response.data["user"]["id"],
+                fullname: response.data["user"]["fullname"],
+                name: response.data["user"]["name"].toString(),
+                token: response.data["user"]["api_token"].toString(),
+                key: response.data["access_token"].toString(),
+                email: response.data["user"]["email"].toString(),
+                profilpicture:  response.data["user"]["profilpicture"].toString(),
+                created: response.data["user"]["created_at"].toString(),
+              );
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Home()),
+              );
+            }else{
+              print(response.data["message"]);
+              print("resp: ${response.data}");
+              _showDialog(context, response.data["message"]);
+            }
+          }
+          else{
+            _showDialog(context, "A jelszó minimum 8 karakter!");
           }
         }
         else{
@@ -218,6 +225,7 @@ class Password extends StatelessWidget {
           ),
         ),
         TextField(
+          maxLength: 300,
           controller: password,
           obscureText: true,
           decoration: const InputDecoration(

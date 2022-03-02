@@ -1,4 +1,6 @@
+import 'package:bevasarlolista_android/controller/userController.dart';
 import 'package:bevasarlolista_android/model/lista_model.dart';
+import 'package:bevasarlolista_android/model/urlprefix.dart';
 import 'package:bevasarlolista_android/pages/lists.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -17,9 +19,9 @@ class _CreateNewListButtonState extends State<CreateNewListButton> {
       onPressed: () async {
         try {
           print("text: ${ujListaNeve.text}");
-          ListaModel content = ListaModel(userid: 1, nev: ujListaNeve.text);
+          ListaModel content = ListaModel(userid: UserController.loggeduser!.id!, nev: ujListaNeve.text);
           var response = await Dio().post(
-            'http://10.0.2.2:8881/api/listak',
+            '${UrlPrefix.prefix}/api/listak',
             data: content.toJson(),
           );
           print(response);

@@ -48,6 +48,11 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                   Container(
+                    height: 300,
+                    color: Colors.green[700],
+                    child: Image.network("https://i.pinimg.com/originals/98/87/69/98876926df3ad430f3f2e695d9f4adf0.gif",width:400,height:300),
+                  ),
+                  Container(
                     height: 50,
                     color: Colors.green[700],
                     child: const Center(child: Text('Ez egy hasznos kis app, ahol tudsz: ')),

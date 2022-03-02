@@ -25,8 +25,8 @@ class EditListButton extends StatelessWidget {
                 controller: _listaElemUjNeve,
               ),
               confirm:
-              ElevatedButton(onPressed: () {
-                editFunction(id, _listaElemUjNeve.text);
+              ElevatedButton(onPressed: () async {
+                await editFunction(id, _listaElemUjNeve.text);
                 Navigator.of(context).pop();
               }, child: const Text("Ok")));
         },

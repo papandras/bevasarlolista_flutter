@@ -1,10 +1,13 @@
 import 'dart:convert';
 
+import 'package:bevasarlolista_android/model/urlprefix.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gravatar/flutter_gravatar.dart';
 import 'package:get/get.dart';
 import '../main.dart';
 
+TextEditingController fullname = TextEditingController();
 TextEditingController username = TextEditingController();
 TextEditingController password = TextEditingController();
 TextEditingController password_confirm = TextEditingController();
@@ -36,6 +39,7 @@ class RegisterPage extends State<Register> {
                   height: 40.0,
                   color: Colors.white,
                 ),
+                FullName(),
                 UserName(),
                 Password(),
                 PasswordConfirm(),
@@ -96,12 +100,14 @@ class RegisterButton extends StatelessWidget {
         }
         else{
           dynamic userdata = {
+            'fullname': fullname.text,
             'name': username.text,
             'password': password.text,
             'email': email.text,
+            'profilpicture': Gravatar(email.text).imageUrl(),
           };
           try{
-            var response = await Dio().post('http://10.0.2.2:8881/api/regisztracio', data: jsonEncode(userdata));
+            var response = await Dio().post('${UrlPrefix.prefix}/api/regisztracio', data: jsonEncode(userdata));
             print(response);
             Get.toNamed('/login');
           }catch(e){
@@ -193,6 +199,40 @@ class PasswordConfirm extends StatelessWidget {
   }
 }
 
+class FullName extends StatelessWidget {
+  const FullName({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.fromLTRB(0, 0, 0, 8),
+          child: Text(
+            'Teljes név:',
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              letterSpacing: 1.5,
+            ),
+          ),
+        ),
+        TextField(
+          controller: fullname,
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            prefixIcon: Icon(Icons.person),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class UserName extends StatelessWidget {
   const UserName({
     Key? key,
@@ -204,7 +244,7 @@ class UserName extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Padding(
-          padding: EdgeInsets.fromLTRB(0, 0, 0, 8),
+          padding: EdgeInsets.fromLTRB(0, 16, 0, 8),
           child: Text(
             'Felhasználó név:',
             style: TextStyle(

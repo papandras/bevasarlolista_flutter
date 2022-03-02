@@ -1,8 +1,13 @@
 import 'package:bevasarlolista_android/controller/userController.dart';
+import 'package:bevasarlolista_android/model/urlprefix.dart';
+import 'package:bevasarlolista_android/model/user_model.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../main.dart';
 import '../components/menu.dart';
+
+bool isChecked = false;
 
 class Profil extends StatefulWidget {
   const Profil({Key? key}) : super(key: key);
@@ -39,9 +44,9 @@ class _ProfilState extends State<Profil> {
                     height: 200.0,
                     decoration: BoxDecoration(
                       color: Colors.green[400],
-                      image: const DecorationImage(
-                        image: AssetImage(
-                          'img/avatar.png',
+                      image: DecorationImage(
+                        image: NetworkImage(
+                          '${UserController.loggeduser!.profilpicture!}',
                         ),
                         fit: BoxFit.cover,
                       ),
@@ -55,7 +60,7 @@ class _ProfilState extends State<Profil> {
                   ),
                 ),
                 Text(
-                  "${UserController.loggeduser}",
+                  "Üdv ${UserController.loggeduser!.fullname!.split(" ")[1]}!",
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     letterSpacing: 2.0,
@@ -70,17 +75,17 @@ class _ProfilState extends State<Profil> {
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Text(
-                        "Adat1:",
+                    children: [
+                      const Text(
+                        "Felhasználónév: ",
                         style: TextStyle(
                           fontSize: 20.0,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
-                        " adat",
-                        style: TextStyle(
+                        "${UserController.loggeduser!.name!}",
+                        style: const TextStyle(
                           fontSize: 20.0,
                         ),
                       ),
@@ -91,17 +96,17 @@ class _ProfilState extends State<Profil> {
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Text(
-                        "Adat2:",
+                    children: [
+                      const Text(
+                        "Email cím: ",
                         style: TextStyle(
                           fontSize: 20.0,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
-                        " adat",
-                        style: TextStyle(
+                        "${UserController.loggeduser!.email!}",
+                        style: const TextStyle(
                           fontSize: 20.0,
                         ),
                       ),
@@ -112,17 +117,17 @@ class _ProfilState extends State<Profil> {
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Text(
-                        "Adat3:",
+                    children: [
+                      const Text(
+                        "Regisztáció dátuma: ",
                         style: TextStyle(
                           fontSize: 20.0,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
-                        " adat",
-                        style: TextStyle(
+                        "${UserController.loggeduser!.created!.split('T')[0]}",
+                        style: const TextStyle(
                           fontSize: 20.0,
                         ),
                       ),
@@ -133,20 +138,22 @@ class _ProfilState extends State<Profil> {
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Text(
-                        "Adat4:",
+                    children: [
+                      const Text(
+                        "Profil törlése kijelentkezéssel:",
                         style: TextStyle(
                           fontSize: 20.0,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Text(
-                        " adat",
-                        style: TextStyle(
-                          fontSize: 20.0,
-                        ),
-                      ),
+                      Checkbox(
+                        value: isChecked,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            isChecked = value!;
+                          });
+                        },
+                      )
                     ],
                   ),
                 ),
@@ -162,7 +169,13 @@ class _ProfilState extends State<Profil> {
                     width: MediaQuery.of(context).size.width,
                     alignment: Alignment.bottomCenter,
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
+                        if(isChecked){
+                          await Dio().delete('${UrlPrefix.prefix}/api/felhasznalo/${UserController.loggeduser!.id!}', options: Options(followRedirects: false, validateStatus: (status){
+                            return status! < 500;
+                          }));
+                        }
+                        UserController.loggeduser = null;
                         Get.toNamed('/login');
                       },
                       style: ElevatedButton.styleFrom(
